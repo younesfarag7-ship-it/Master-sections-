@@ -4,8 +4,22 @@ from discord.ext import commands
 from discord import Embed, Color, Option
 from dotenv import load_dotenv
 
-# تحميل المتغيرات من ملف .env
-load_dotenv()
+# محاولة قراءة التوكن من Environment Variables أولاً
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+# إذا لم يوجد، حاول من ملف .env (للتشغيل المحلي)
+if not TOKEN:
+    load_dotenv()
+    TOKEN = os.getenv("DISCORD_TOKEN")
+
+# إذا لم يوجد التوكن، أظهر خطأ واضحاً
+if not TOKEN:
+    raise ValueError(
+        "❌ التوكن غير موجود!\n"
+        "ضع التوكن في:\n"
+        "1. متغير البيئة DISCORD_TOKEN (على المنصة)\n"
+        "2. أو ملف .env (للتشغيل المحلي)"
+    )
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -258,4 +272,5 @@ async def sync_sections(ctx: discord.ApplicationContext):
         await ctx.respond("✅ جميع الرتب موجودة مسبقاً.", ephemeral=True)
 
 # ==================== تشغيل البوت ====================
-bot.run(os.getenv("DISCORD_TOKEN"))
+print("🔄 جاري تشغيل البوت...")
+bot.run(TOKEN)
